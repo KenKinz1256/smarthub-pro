@@ -1,1 +1,1 @@
-# smarthub-pro
+# smarthub-remote
