@@ -7,68 +7,74 @@
   <!-- Thư viện MQTT.js bản ổn định nhất cho Browser -->
   <script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background: #0f111a; margin: 12px 0; color: #e0e0e0; }
-    .card { background: #181b26; max-width: 480px; margin: auto; padding: 18px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .status-bar { background: #222634; padding: 10px; border-radius: 12px; margin-bottom: 15px; font-size: 13px; font-weight: bold; border: 1px solid #3d445e; display: flex; align-items: center; justify-content: center; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background: #f4f6f9; margin: 12px 0; color: #1e293b; }
+    .card { background: #ffffff; max-width: 480px; margin: auto; padding: 18px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; }
+    .status-bar { background: #f8fafc; padding: 10px; border-radius: 12px; margin-bottom: 15px; font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; color: #334155; }
     .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #e74c3c; margin-right: 8px; }
     .status-dot.online { background: #2ecc71; }
 
-    .config-box, .selector-box, .add-preset-box, .irdb-box, .ip-config-box, .sync-box { background: #222634; padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #3d445e; text-align: left; }
-    select, input { padding: 10px; font-size: 14px; width: 100%; border-radius: 8px; border: 1px solid #4a5475; font-weight: bold; color: #fff; background: #2c3246; box-sizing: border-box; margin-top: 6px; }
-    .btn-add { background: #3498db; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
-    .btn-irdb { background: #27ae60; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
-    .btn-sync { background: #2980b9; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    .config-box, .selector-box, .add-preset-box, .irdb-box, .ip-config-box, .sync-box { background: #ffffff; padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; text-align: left; }
+    select, input { padding: 10px; font-size: 14px; width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: bold; color: #0f172a; background: #ffffff; box-sizing: border-box; margin-top: 6px; }
+    select:focus, input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
+    .btn-add { background: #2563eb; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    .btn-add:hover { background: #1d4ed8; }
+    .btn-irdb { background: #16a34a; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    .btn-irdb:hover { background: #15803d; }
+    .btn-sync { background: #0284c7; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    .btn-sync:hover { background: #0369a1; }
 
-    .voice-box { background: linear-gradient(135deg, #d35400, #e67e22); border-radius: 14px; padding: 12px; margin-bottom: 15px; color: white; }
-    .btn-mic { background: #a04000; color: white; border: none; padding: 10px; font-size: 15px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; }
-    .btn-mic.recording { background: #c0392b; animation: pulse 1.5s infinite; }
+    .voice-box { background: linear-gradient(135deg, #f97316, #ea580c); border-radius: 14px; padding: 12px; margin-bottom: 15px; color: white; }
+    .btn-mic { background: #ffffff; color: #c2410c; border: none; padding: 10px; font-size: 15px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+    .btn-mic.recording { background: #dc2626; color: #ffffff; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
 
-    .remote-shell { border-radius: 24px; padding: 18px; margin: 10px auto; color: white; text-align: center; box-shadow: inset 0 0 10px rgba(255,255,255,0.05); }
-    .brand-lg { background: #26161a; border: 2px solid #a8324a; }
-    .brand-samsung { background: #101c2e; border: 2px solid #2980b9; }
-    .brand-tcl { background: #291b18; border: 2px solid #e67e22; }
-    .brand-panasonic { background: #162421; border: 2px solid #27ae60; }
-    .brand-sony { background: #1c1c1c; border: 2px solid #7f8c8d; }
-    .brand-ac { background: #112836; border: 2px solid #00a8ff; }
-    .brand-projector { background: #221f3b; border: 2px solid #8e44ad; }
-    .brand-generic { background: #212529; border: 2px solid #495057; }
-    .brand-ip { background: #0e3b43; border: 2px solid #00b4d8; }
+    .remote-shell { border-radius: 24px; padding: 18px; margin: 10px auto; color: #1e293b; text-align: center; background: #ffffff; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06); }
+    .brand-lg { background: #fffafb; border: 2px solid #e11d48; }
+    .brand-samsung { background: #f8fbff; border: 2px solid #2563eb; }
+    .brand-tcl { background: #fffaf5; border: 2px solid #ea580c; }
+    .brand-panasonic { background: #f5fbf8; border: 2px solid #16a34a; }
+    .brand-sony { background: #fafafa; border: 2px solid #475569; }
+    .brand-ac { background: #f4fbff; border: 2px solid #0284c7; }
+    .brand-projector { background: #faf5ff; border: 2px solid #7e22ce; }
+    .brand-generic { background: #ffffff; border: 2px solid #94a3b8; }
+    .brand-ip { background: #f0fdff; border: 2px solid #0891b2; }
 
-    .remote-header { font-size: 17px; font-weight: bold; margin-bottom: 12px; color: #f1c40f; text-transform: uppercase; letter-spacing: 1px; }
+    .remote-header { font-size: 17px; font-weight: bold; margin-bottom: 12px; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
 
-    .d-pad { position: relative; width: 160px; height: 160px; background: #2d3243; border-radius: 50%; margin: 15px auto; display: flex; align-items: center; justify-content: center; }
-    .d-btn { position: absolute; background: #3d445a; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 14px; }
-    .d-btn:active { background: #f39c12; }
+    .d-pad { position: relative; width: 160px; height: 160px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 50%; margin: 15px auto; display: flex; align-items: center; justify-content: center; }
+    .d-btn { position: absolute; background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .d-btn:active { background: #f59e0b; color: #ffffff; }
     .d-up { top: 6px; left: 62px; width: 36px; height: 36px; border-radius: 50% 50% 0 0; }
     .d-down { bottom: 6px; left: 62px; width: 36px; height: 36px; border-radius: 0 0 50% 50%; }
     .d-left { left: 6px; top: 62px; width: 36px; height: 36px; border-radius: 50% 0 0 50%; }
     .d-right { right: 6px; top: 62px; width: 36px; height: 36px; border-radius: 0 50% 50% 0; }
-    .d-ok { width: 68px; height: 68px; background: #4e5672; border-radius: 50%; font-weight: bold; font-size: 15px; color: #fff; }
+    .d-ok { width: 68px; height: 68px; background: #e2e8f0; border: 1px solid #94a3b8; border-radius: 50%; font-weight: bold; font-size: 15px; color: #0f172a; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
 
-    .btn-cmd { background: #2f3545; color: #e0e0e0; border: 1px solid #454f68; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; }
-    .btn-cmd:active { background: #3498db; }
-    .btn-power { background: #c0392b; color: white; font-weight: bold; padding: 12px; border-radius: 10px; border: none; cursor: pointer; }
-    .btn-power-on { background: #27ae60; color: white; font-weight: bold; padding: 12px; border-radius: 10px; border: none; cursor: pointer; }
+    .btn-cmd { background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; }
+    .btn-cmd:hover { background: #f8fafc; }
+    .btn-cmd:active { background: #2563eb; color: #ffffff; }
+    .btn-power { background: #dc2626; color: white; font-weight: bold; padding: 12px; border-radius: 10px; border: none; cursor: pointer; }
+    .btn-power-on { background: #16a34a; color: white; font-weight: bold; padding: 12px; border-radius: 10px; border: none; cursor: pointer; }
 
-    .color-btn { height: 20px; border-radius: 4px; border: none; cursor: pointer; }
-    .c-red { background: #e74c3c; } .c-green { background: #2ecc71; } .c-yellow { background: #f1c40f; } .c-blue { background: #3498db; }
+    .color-btn { height: 20px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; }
+    .c-red { background: #ef4444; } .c-green { background: #22c55e; } .c-yellow { background: #eab308; } .c-blue { background: #3b82f6; }
 
-    .pill-box { display: flex; flex-direction: column; background: #2a2f40; border-radius: 20px; overflow: hidden; width: 48px; margin: auto; }
-    .pill-box button { background: transparent; border: none; color: white; padding: 12px 0; font-weight: bold; font-size: 13px; cursor: pointer; }
+    .pill-box { display: flex; flex-direction: column; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 20px; overflow: hidden; width: 48px; margin: auto; }
+    .pill-box button { background: transparent; border: none; color: #1e293b; padding: 12px 0; font-weight: bold; font-size: 13px; cursor: pointer; }
+    .pill-box button:hover { background: #e2e8f0; }
 
-    .ac-display { background: #000; border: 2px solid #00a8ff; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #00a8ff; font-family: monospace; }
-    .btn-reset-wifi { background: #d35400; color: white; font-weight: bold; padding: 10px; border-radius: 10px; border: none; cursor: pointer; width: 100%; margin-bottom: 12px; font-size: 13px; }
+    .ac-display { background: #ffffff; border: 2px solid #0284c7; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #0369a1; font-family: monospace; }
+    .btn-reset-wifi { background: #ea580c; color: white; font-weight: bold; padding: 10px; border-radius: 10px; border: none; cursor: pointer; width: 100%; margin-bottom: 12px; font-size: 13px; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2 style="margin: 0 0 10px 0; color: #3498db;">🌐 SMART HUB CLOUD PRO</h2>
+    <h2 style="margin: 0 0 10px 0; color: #2563eb;">🌐 SMART HUB CLOUD PRO</h2>
 
     <div class="status-bar">
       <span id="dot" class="status-dot"></span>
@@ -77,34 +83,34 @@
 
     <!-- Khung cấu hình tài khoản Adafruit IO -->
     <div class="config-box">
-      <h4 style="color:#f1c40f; margin:0 0 6px 0;">🔑 Cấu hình Adafruit IO</h4>
-      <input type="text" id="aio_user" placeholder="AIO Username (VD: trucnecooi)">
+      <h4 style="color:#b45309; margin:0 0 6px 0;">🔑 Cấu hình Adafruit IO</h4>
+      <input type="text" id="aio_user" placeholder="AIO Username (VD: anhquan69)">
       <input type="password" id="aio_key" placeholder="AIO Key (aio_...)">
       <button class="btn-add" onclick="connectMQTT()">LƯU & KẾT NỐI CLOUD</button>
     </div>
 
     <!-- Hộp nhập IP ESP32 trên LAN -->
     <div class="ip-config-box">
-      <h4 style="color:#00b4d8; margin:0 0 6px 0;">🔗 ĐỊA CHỈ IP ESP32 TRÊN LAN (Tùy chọn)</h4>
+      <h4 style="color:#0284c7; margin:0 0 6px 0;">🔗 ĐỊA CHỈ IP ESP32 TRÊN LAN (Tùy chọn)</h4>
       <input type="text" id="espIpInput" placeholder="VD: 192.168.1.150" value="">
     </div>
 
     <!-- Hộp Đồng bộ danh sách thiết bị từ ESP32 qua Cloud Adafruit IO -->
     <div class="sync-box">
-      <h4 style="color:#2ecc71; margin:0 0 6px 0;">🔄 ĐỒNG BỘ THIẾT BỊ TỪ ESP32</h4>
-      <p style="font-size: 11px; color: #a0aec0; margin: 4px 0 8px 0;">Lấy danh sách thiết bị mới nhất từ ESP32 thông qua Cloud Adafruit IO.</p>
+      <h4 style="color:#16a34a; margin:0 0 6px 0;">🔄 ĐỒNG BỘ THIẾT BỊ TỪ ESP32</h4>
+      <p style="font-size: 11px; color: #64748b; margin: 4px 0 8px 0;">Lấy danh sách thiết bị mới nhất từ ESP32 thông qua Cloud Adafruit IO.</p>
       <button type="button" class="btn-sync" onclick="requestSyncFromESP32()">📥 Đồng bộ danh sách từ ESP32</button>
     </div>
 
     <!-- Hộp chọn và gửi mã IR trực tiếp từ kho GitHub (ir_database.json) -->
     <div class="irdb-box">
-      <h4 style="color:#2ecc71; margin:0 0 6px 0;">📡 GỬI MÃ IR TỪ KHO GITHUB (IRDB)</h4>
-      <label style="font-size: 12px;">Chọn hãng thiết bị:</label>
+      <h4 style="color:#16a34a; margin:0 0 6px 0;">📡 GỬI MÃ IR TỪ KHO GITHUB (IRDB)</h4>
+      <label style="font-size: 12px; color: #334155;">Chọn hãng thiết bị:</label>
       <select id="jsonBrandSelect">
         <option value="lg">LG TV (GitHub JSON)</option>
         <option value="sony">Sony Bravia (GitHub JSON)</option>
       </select>
-      <label style="font-size: 12px; margin-top: 8px; display: block;">Tên lệnh (Command):</label>
+      <label style="font-size: 12px; margin-top: 8px; display: block; color: #334155;">Tên lệnh (Command):</label>
       <input type="text" id="jsonCommand" placeholder="VD: power_toggle, vol_up..." value="power_toggle">
       <button type="button" class="btn-irdb" onclick="sendIRFromGitHubJSON()">🚀 PHÁT MÃ IR TỪ GITHUB</button>
     </div>
@@ -117,7 +123,7 @@
     </div>
 
     <div class="add-preset-box">
-      <h4 style="color:#3498db; margin:0 0 6px 0;">➕ Thêm Remote có sẵn</h4>
+      <h4 style="color:#2563eb; margin:0 0 6px 0;">➕ Thêm Remote có sẵn</h4>
       <input type="text" id="presetName" placeholder="Tên thiết bị..." required>
       <select id="presetType">
         <option value="0">Thiet bi hoc IR</option>
@@ -153,14 +159,14 @@
     </div>
 
     <div class="selector-box">
-      <label style="font-size:13px; font-weight:bold; color:#a0aec0;">CHỌN THIẾT BỊ ĐIỀU KHIỂN:</label>
+      <label style="font-size:13px; font-weight:bold; color:#475569;">CHỌN THIẾT BỊ ĐIỀU KHIỂN:</label>
       <select id="deviceSelector" onchange="changeActiveDevice(this.value)">
         <option value="0">Smart TV LivingRoom (TV LG)</option>
       </select>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-        <span style="color:#718096; font-size:12px;"><a href="javascript:void(0)" onclick="deleteCurrentDevice()" style="color:#e74c3c; text-decoration:none;">🗑️ Xóa thiết bị này</a></span>
-        <a href="javascript:void(0)" onclick="resetAllDevicesCloud()" style="color:#f39c12; font-size:12px; text-decoration:none; font-weight:bold;">⚠️ Xóa tất cả (Reset về 0)</a>
+        <span style="color:#64748b; font-size:12px;"><a href="javascript:void(0)" onclick="deleteCurrentDevice()" style="color:#dc2626; text-decoration:none;">🗑️ Xóa thiết bị này</a></span>
+        <a href="javascript:void(0)" onclick="resetAllDevicesCloud()" style="color:#d97706; font-size:12px; text-decoration:none; font-weight:bold;">⚠️ Xóa tất cả (Reset về 0)</a>
       </div>
     </div>
 
@@ -230,11 +236,11 @@
       AIO_SYNC_TOPIC = user + "/feeds/device-sync";
 
       document.getElementById('status-text').innerText = 'Đang kết nối Cloud Adafruit IO...';
-      document.getElementById('status-text').style.color = '#f1c40f';
+      document.getElementById('status-text').style.color = '#d97706';
 
       const connectUrl = 'wss://io.adafruit.com:443/mqtt';
       const options = {
-        clientId: 'web_' + Math.random().toString(16).substr(2, 8),
+        clientId: 'web_' + Math.random().toString(16).substr(2, 😎,
         username: user,
         password: key,
         keepalive: 60,
@@ -249,7 +255,7 @@
       client.on('connect', function () {
         document.getElementById('dot').className = 'status-dot online';
         document.getElementById('status-text').innerText = 'Đã kết nối Cloud Adafruit IO!';
-        document.getElementById('status-text').style.color = '#2ecc71';
+        document.getElementById('status-text').style.color = '#16a34a';
         console.log("✅ Kết nối MQTT Adafruit IO thành công!");
 
         client.subscribe(AIO_SYNC_TOPIC, function (err) {
@@ -265,7 +271,7 @@
             
             if (data.devices && Array.isArray(data.devices)) {
               devicesList = data.devices;
-              saveDevicesToLocalStorage(); // Lưu vào bộ nhớ máy tự động
+              saveDevicesToLocalStorage();
               updateDeviceSelectorUI();
               console.log("🔔 Đã tự động cập nhật " + data.count + " thiết bị từ ESP32 lên web!");
             }
@@ -278,7 +284,7 @@
       client.on('error', function (err) {
         document.getElementById('dot').className = 'status-dot';
         document.getElementById('status-text').innerText = 'Lỗi kết nối Cloud! Kiểm tra Key/User';
-        document.getElementById('status-text').style.color = '#e74c3c';
+        document.getElementById('status-text').style.color = '#dc2626';
         console.error("❌ Lỗi MQTT:", err);
       });
 
@@ -288,7 +294,6 @@
       });
     }
 
-    // Gửi yêu cầu sync_request qua Adafruit IO để ép ESP32 đẩy danh sách thiết bị lên Cloud ngay lập tức
     function requestSyncFromESP32() {
       if (!client || !client.connected) {
         alert("Vui lòng kết nối Cloud Adafruit IO trước khi đồng bộ!");
@@ -342,12 +347,12 @@
           let rawStringPayload = 'raw,' + rawArray.join(',');
 
           if (espIp) {
-            let targetUrl = `http://${espIp}/send-raw-mqtt?data=${encodeURIComponent(rawStringPayload)}`;
+            let targetUrl = http://${espIp}/send-raw-mqtt?data=${encodeURIComponent(rawStringPayload)};
             await fetch(targetUrl, { mode: 'no-cors' });
-            alert(`Đã truyền lệnh [${cmdName}] trực tiếp tới ESP32 (${espIp})!`);
+            alert(Đã truyền lệnh [${cmdName}] trực tiếp tới ESP32 (${espIp})!);
           } else {
             sendCmd(rawStringPayload);
-            alert(`Đã đẩy lệnh [${cmdName}] qua Cloud MQTT tới ESP32!`);
+            alert(Đã đẩy lệnh [${cmdName}] qua Cloud MQTT tới ESP32!);
           }
         } else {
           alert("Không tìm thấy hãng hoặc tên lệnh trong file ir_database.json trên GitHub!");
@@ -379,7 +384,7 @@
       if (!name) { alert("Vui lòng nhập tên thiết bị!"); return; }
       
       devicesList.push({ name: name, type: type });
-      saveDevicesToLocalStorage(); // Lưu vào bộ nhớ máy tự động
+      saveDevicesToLocalStorage();
       updateDeviceSelectorUI();
       document.getElementById("deviceSelector").value = devicesList.length - 1;
       changeActiveDevice(devicesList.length - 1);
@@ -393,13 +398,13 @@
       let devIdx = parseInt(document.getElementById("deviceSelector").value);
       if (devicesList.length > 0 && !isNaN(devIdx) && devIdx >= 0 && devIdx < devicesList.length) {
         devicesList.splice(devIdx, 1);
-        saveDevicesToLocalStorage(); // Cập nhật lại LocalStorage
+        saveDevicesToLocalStorage();
         updateDeviceSelectorUI();
         if(devicesList.length > 0) {
           document.getElementById("deviceSelector").value = 0;
           changeActiveDevice(0);
         } else {
-          document.getElementById("remoteContainer").innerHTML = "<p style='color:#718096;'>Chưa có thiết bị</p>";
+          document.getElementById("remoteContainer").innerHTML = "<p style='color:#64748b;'>Chưa có thiết bị</p>";
         }
         sendCmd("delete," + devIdx);
       }
@@ -410,7 +415,7 @@
       selector.innerHTML = "";
       if(devicesList.length === 0) {
         selector.innerHTML = "<option value=''>-- Không có thiết bị --</option>";
-        document.getElementById("remoteContainer").innerHTML = "<p style='color:#718096;'>Chưa có thiết bị</p>";
+        document.getElementById("remoteContainer").innerHTML = "<p style='color:#64748b;'>Chưa có thiết bị</p>";
         return;
       }
       devicesList.forEach((dev, idx) => {
@@ -470,7 +475,7 @@
         html = `<div class="remote-shell brand-samsung">
           <div class="remote-header">${devName} (SAMSUNG SMART)</div>
           <div class="grid-3"><button class="btn-power-on" onclick="sendAction('power_on')">ON</button><button class="btn-power" onclick="sendAction('power_off')">OFF</button><button class="btn-cmd" onclick="sendAction('source')">SOURCE</button></div>
-          <div class="grid-3"><button class="btn-cmd" style="color:#f1c40f;" onclick="sendAction('smarthub')">SMARTHUB</button><button class="btn-cmd" onclick="sendAction('menu')">MENU</button><button class="btn-cmd" onclick="sendAction('tools')">TOOLS</button></div>
+          <div class="grid-3"><button class="btn-cmd" style="color:#b45309;" onclick="sendAction('smarthub')">SMARTHUB</button><button class="btn-cmd" onclick="sendAction('menu')">MENU</button><button class="btn-cmd" onclick="sendAction('tools')">TOOLS</button></div>
           <div class="d-pad"><button class="d-btn d-up" onclick="sendAction('up')">▲</button><button class="d-btn d-down" onclick="sendAction('down')">▼</button><button class="d-btn d-left" onclick="sendAction('left')">◄</button><button class="d-btn d-right" onclick="sendAction('right')">►</button><button class="d-btn d-ok" onclick="sendAction('select')">ENTER</button></div>
           <div class="grid-3"><button class="btn-cmd" onclick="sendAction('back')">RETURN</button><button class="btn-cmd" onclick="sendAction('info')">INFO</button><button class="btn-cmd" onclick="sendAction('exit')">EXIT</button></div>
           <div class="grid-4"><button class="color-btn c-red" onclick="sendAction('ared')">A</button><button class="color-btn c-green" onclick="sendAction('bgreen')">B</button><button class="color-btn c-yellow" onclick="sendAction('cyellow')">C</button><button class="color-btn c-blue" onclick="sendAction('dblue')">D</button></div>
@@ -494,7 +499,7 @@
             <button class="btn-cmd" onclick="sendAction('mute')">MUTE</button>
             <div class="pill-box"><button onclick="sendAction('ch_up')">P+</button><button onclick="sendAction('ch_down')">P-</button></div>
           </div>
-          <button class="btn-cmd" style="width:100%; margin-top:10px; background:#e50914; color:white;" onclick="sendAction('netflix')">NETFLIX</button>
+          <button class="btn-cmd" style="width:100%; margin-top:10px; background:#e50914; color:white; border:none;" onclick="sendAction('netflix')">NETFLIX</button>
         </div>`;
       }
       else if (typeVal === 4) {
@@ -509,8 +514,8 @@
             <button class="btn-cmd" onclick="sendAction('mute')">MUTE</button>
             <div class="pill-box"><button onclick="sendAction('ch_up')">CH+</button><button onclick="sendAction('ch_down')">CH-</button></div>
           </div>
-          <div class="grid-2" style="margin-top:10px;"><button class="btn-cmd" style="background:#e50914; color:white;" onclick="sendAction('netflix')">NETFLIX</button><button class="btn-cmd" style="background:#ff0000; color:white;" onclick="sendAction('youtube')">YOUTUBE</button></div>
-          <div class="grid-2"><button class="btn-cmd" style="background:#00a8e1; color:white;" onclick="sendAction('prime')">PRIME VIDEO</button><button class="btn-cmd" style="background:#ff6600; color:white;" onclick="sendAction('tclchannel')">TCL CHANNEL</button></div>
+          <div class="grid-2" style="margin-top:10px;"><button class="btn-cmd" style="background:#e50914; color:white; border:none;" onclick="sendAction('netflix')">NETFLIX</button><button class="btn-cmd" style="background:#ff0000; color:white; border:none;" onclick="sendAction('youtube')">YOUTUBE</button></div>
+          <div class="grid-2"><button class="btn-cmd" style="background:#00a8e1; color:white; border:none;" onclick="sendAction('prime')">PRIME VIDEO</button><button class="btn-cmd" style="background:#ff6600; color:white; border:none;" onclick="sendAction('tclchannel')">TCL CHANNEL</button></div>
         </div>`;
       }
       else if (typeVal === 5) {
@@ -525,7 +530,7 @@
             <button class="btn-cmd" onclick="sendAction('mute')">MUTE</button>
             <div class="pill-box"><button onclick="sendAction('ch_up')">P+</button><button onclick="sendAction('ch_down')">P-</button></div>
           </div>
-          <div class="grid-3" style="margin-top:10px;"><button class="btn-cmd" onclick="sendAction('picture')">PICTURE</button><button class="btn-cmd" onclick="sendAction('help')">HELP</button><button class="btn-cmd" style="background:#e50914; color:white;" onclick="sendAction('netflix')">NETFLIX</button></div>
+          <div class="grid-3" style="margin-top:10px;"><button class="btn-cmd" onclick="sendAction('picture')">PICTURE</button><button class="btn-cmd" onclick="sendAction('help')">HELP</button><button class="btn-cmd" style="background:#e50914; color:white; border:none;" onclick="sendAction('netflix')">NETFLIX</button></div>
         </div>`;
       }
       else if (typeVal === 6) {
@@ -602,7 +607,7 @@
       else if (typeVal === 17) {
         html = `<div class="remote-shell brand-generic">
           <div class="remote-header">${devName} (ROBOT VACUUM)</div>
-          <div class="grid-2"><button class="btn-power-on" onclick="sendAction('auto')">AUTO CLEAN</button><button class="btn-cmd" style="background:#f39c12; color:white;" onclick="sendAction('home_charge')">🏠 CHARGE</button></div>
+          <div class="grid-2"><button class="btn-power-on" onclick="sendAction('auto')">AUTO CLEAN</button><button class="btn-cmd" style="background:#f59e0b; color:white; border:none;" onclick="sendAction('home_charge')">🏠 CHARGE</button></div>
           <div class="d-pad"><button class="d-btn d-up" onclick="sendAction('up')">▲</button><button class="d-btn d-down" onclick="sendAction('down')">▼</button><button class="d-btn d-left" onclick="sendAction('left')">◄</button><button class="d-btn d-right" onclick="sendAction('right')">►</button><button class="d-btn d-ok" onclick="sendAction('auto')">START</button></div>
           <div class="grid-2"><button class="btn-cmd" onclick="sendAction('edge')">EDGE CLEAN</button><button class="btn-cmd" onclick="sendAction('spot')">SPOT CLEAN</button></div>
         </div>`;
